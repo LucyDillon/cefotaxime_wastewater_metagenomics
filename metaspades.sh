@@ -23,3 +23,6 @@ EOF
 done
 
 # NOTE: this script will submit a separate job to the slum queue
+### name of script on kelvin: metaspades_medpri.sh
+#### version of Metaspades: SPAdes genome assembler v4.0.0 [metaSPAdes mode]
+#### citation: https://pmc.ncbi.nlm.nih.gov/articles/PMC5411777/ 
