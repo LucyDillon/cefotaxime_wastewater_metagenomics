@@ -40,38 +40,38 @@ Now the assembly should be complete and we will move onto the binning process, s
 ### name of script: maxbin2.sh
 
 ## Step 9: Run Concoct
-### Step 1
-#### name of script: concoct_step_1.sh
-### Step 2:
-#### name of script: concoct_step_2.sh
-### Step 3:
-#### name of script: concoct_step_3.sh
-### Step 4:
-#### name of script: concoct_step_4.sh
-### Step 5:
-#### name of script: concoct_step_5.sh
+#### Step 1
+##### name of script: concoct_step_1.sh
+#### Step 2:
+##### name of script: concoct_step_2.sh
+#### Step 3:
+##### name of script: concoct_step_3.sh
+#### Step 4:
+##### name of script: concoct_step_4.sh
+#### Step 5:
+##### name of script: concoct_step_5.sh
 
 ## Step 10: Run magscot
-### Step 1:
-#### name of script: magscot_step1_prodigal.sh
-### Step 2:
-#### name of script: magscot_step2_hmmer.sh
-### Step 3:
-#### name of script: magscot_step3_make_hmm.sh
-### Step 4:
-#### name of script: magscot_step4_make_tsv.sh
-### Step 5:
-#### name of script: magscot_step5_finalised_tsv.sh
-### Step 6:
-#### name of script: magscot_step6_run_magscot.sh
+#### Step 1:
+##### name of script: magscot_step1_prodigal.sh
+#### Step 2:
+##### name of script: magscot_step2_hmmer.sh
+#### Step 3:
+##### name of script: magscot_step3_make_hmm.sh
+#### Step 4:
+##### name of script: magscot_step4_make_tsv.sh
+#### Step 5:
+##### name of script: magscot_step5_finalised_tsv.sh
+#### Step 6:
+##### name of script: magscot_step6_run_magscot.sh
 Now lets extract the bins for drep from the magscot. 
 You will need to install seqkit into your conda environment
-### Step 7:
-#### name of script: magscot_step7_extract_info.sh
-### Step 8:
-#### name of script: magscot_step8_contig_info.sh
-### Step 9:
-#### name of script: magscot_step9_extract_bins.sh
+#### Step 7:
+##### name of script: magscot_step7_extract_info.sh
+#### Step 8:
+##### name of script: magscot_step8_contig_info.sh
+#### Step 9:
+##### name of script: magscot_step9_extract_bins.sh
 
 ## Step 11: Run dRep:
 ### name of script: drep.sh
