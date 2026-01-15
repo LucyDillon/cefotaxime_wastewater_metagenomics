@@ -26,14 +26,14 @@ Now the assembly should be complete and we will move onto the binning process, s
 ## Step 7: MetaBat2
 ##### version of Metabat2: version 2:2.15
 ##### citation: https://pmc.ncbi.nlm.nih.gov/articles/PMC6662567/ 
-### Step 1: Make the bam files
-#### name of script: make_bam_files.sh
-### Step 2: Create binning directories
-#### name of script: make_binning_dirs.sh 
-### Step 3: Run JGI for metabat2
-#### name of script: jgi.sh
-### Step 4: Run Metabat2
-#### name of script: metabat2.sh
+#### Step 1: Make the bam files
+##### name of script: make_bam_files.sh
+#### Step 2: Create binning directories
+##### name of script: make_binning_dirs.sh 
+#### Step 3: Run JGI for metabat2
+##### name of script: jgi.sh
+#### Step 4: Run Metabat2
+##### name of script: metabat2.sh
 
 
 ## Step 8: run MaxBin2
