@@ -74,7 +74,7 @@ for i in $(cat ../samples.txt); do cat ${i}.pfam ${i}.tigr > ${i}.hmm; done
 
 ```
 ## Step 20:
-### name of script: magscot_step4_x.sh
+### name of script: magscot_step4_make_tsv.sh
 ```
 
 for file in *concoct*.fa; do   {     printf "File\tContigID\tBinner\n";     grep '^>' "$file" |     awk -v f="$file" '{print f "\t" $1 "\tconcoct"}' |     sed 's/>//g' | sed 's/.fa//g';   } > "${file%%.fa}.contigs_to_bin.tsv"; done
@@ -86,7 +86,7 @@ for file in *metabat2*.fa; do   {     printf "File\tContigID\tBinner\n";     gre
 ```
 
 ## Step 20:
-### name of script: magscot_step5_x.sh
+### name of script: magscot_step5_finalised_tsv.sh
 ```
 for i in $(cat ../../samples.txt); do
     awk 'FNR==1 && NR!=1 {next} {print}' ${i}*contigs_to_bin.tsv \
@@ -121,13 +121,13 @@ Now lets extract the bins for drep from the magscot.
 You will need to install seqkit into your conda environment
 
 ## Step 22:
-### name of script: magscot_step7_x.sh
+### name of script: magscot_step7_extract_info.sh
 ```
 for i in $(cat samples.txt); do tail -n +2 magscot/${i}_magscot.refined.contig_to_bin.out | cut -f1 | sed 's#.*/##' | sort -u > magscot/${i}_cleanbins.txt; done
 
 ```
 ## Step 23:
-### name of script: magscot_step8_x.sh
+### name of script: magscot_step8_contig_info.sh
 ```
 for i in $(cat ../samples.txt); do awk '{split($1,a,"/");bin=a[length(a)];print $2 > (bin ".contigs")}' ${i}_magscot.refined.contig_to_bin.out; done 
 
