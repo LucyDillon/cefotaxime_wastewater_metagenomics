@@ -1,6 +1,6 @@
 # cefotaxime_wastewater_metagenomics
 
-
+# Preprocess reads
 ## You need to upload:
 - bowtie2 script (version number in comments)
 - fastp script (version number in comments)
@@ -11,6 +11,7 @@
 ## Step 4: Bowtie2
 
 
+# Assembly
 ## Step 5: Assemble the reads into contigs using Metaspades
 ### name of script: metaspades.sh
 #### version of Metaspades: SPAdes genome assembler v4.0.0 [metaSPAdes mode]
@@ -23,6 +24,7 @@ Note: if you need to run this as a bash script to submit to the queue use filter
 
 Now the assembly should be complete and we will move onto the binning process, starting with Metabat2.
 
+# Binning
 ## Step 7: MetaBat2
 ##### version of Metabat2: version 2:2.15
 ##### citation: https://pmc.ncbi.nlm.nih.gov/articles/PMC6662567/ 
@@ -51,6 +53,7 @@ Now the assembly should be complete and we will move onto the binning process, s
 #### Step 5:
 ##### name of script: concoct_step_5.sh
 
+# Process bins
 ## Step 10: Run magscot
 #### Step 1:
 ##### name of script: magscot_step1_prodigal.sh
@@ -77,6 +80,7 @@ You will need to install seqkit into your conda environment
 ### name of script: drep.sh
 dRep v3.5.0
 
+# Annotations
 ## Step 12:
 ### name of script: genomad.sh
 
