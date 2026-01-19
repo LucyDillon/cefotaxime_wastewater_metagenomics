@@ -6,6 +6,9 @@
 - fastp script (version number in comments)
 - fastqc and multiqc scripts (version number in comments)
 ## Step 1: FastQC
+```
+echo "hello world"
+```
 ## Step 1: MultiQC
 ## Step 3: fastp
 ## Step 4: Bowtie2
