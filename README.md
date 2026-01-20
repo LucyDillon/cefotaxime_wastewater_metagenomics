@@ -5,14 +5,94 @@
 - bowtie2 script (version number in comments)
 - fastp script (version number in comments)
 - fastqc and multiqc scripts (version number in comments)
+  
 ## Step 1: FastQC
+#### Version of FastQC: version 0.12.1
+#### Citation: Andrews, S. (2010). FastQC: A Quality Control Tool for High Throughput Sequence Data. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc
+#### Version of parallel: GNU Parallel 20230722
+#### Citation: https://zenodo.org/records/1146014
+
 ```
-echo "hello world"
+module load FastQC/0.12.1-Java-11
+module load parallel
+mkdir fastqc_results
+ls *.fastq | parallel fastqc -o fastqc_results {}
+
 ```
 ## Step 1: MultiQC
-## Step 3: fastp
-## Step 4: Bowtie2
+#### Version of MultiQC: version 1.22.3 
+#### citation: http://dx.doi.org/10.1093/bioinformatics/btw354
 
+```
+module load MultiQC/1.22.3-foss-2023b 
+multiqc fastqc_results/ -o multiqc_report
+ 
+```
+## Step 3: fastp
+### Name of script: run_fastp.sh
+#### Version of fastp: version 0.23.4
+#### citation: https://doi.org/10.1002/imt2.107 
+You wil then need to QC Trimmed reads with FastQC and MultiQC
+
+```
+module load FastQC/0.12.1-Java-11 
+module load parallel 
+ls *.fastq | parallel fastqc -o fastqc_results {} 
+mkdir fastqc_results 
+ls *.fastq | parallel fastqc -o fastqc_results {}
+module load MultiQC/1.22.3-foss-2023b #load most recent multi qc version
+multiqc fastqc_results/ -o multiqc_report
+
+```
+## Step 4: Bowtie2
+### Build index
+First, build an index of host contaminants (i.e. human, rat, mouse, anything sewage related), aligns reads to host contamination, used for cleaning reads
+
+get host contamination genomes using wget: 
+```
+Wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/635/GCF_000001635.27_GRCm39/GCF_000001635.27_GRCm39_genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/635/GCF_000001635.27_GRCm39/GCF_000001635.27_GRCm39_genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_genomic.fna.gz 
+```
+unzip the files
+```
+gunzip *.gz
+```
+Concatonate all ending.fna (combine the contamination genome files)
+```
+cat *.fna > reference_genomes.fna
+```
+
+### run bowtie2-build to build index
+#### Bowtie 2 version: version 2.5.1
+#### citation: https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml
+#### name of scipt: build_index.sh
+
+### Remove host contamination with bowtie2
+#for one sample:
+```
+module load Bowtie2/2.5.1-GCC-12.3.0
+bowtie2 -x ../reference_genomes/reference_genome \
+  -1 D8C01_S1_R1.trimmed.fastq -2 D8C01_S1_R2.trimmed.fastq \
+  --very-sensitive --threads 8 \
+  --un-conc-gz D8C01_unmapped_R%.fq.gz \
+  -S /dev/null
+```
+<20 % is usable
+<5 % common and acceptable
+<1 % alignment is the best  
+
+Once all samples have had host contamination removed, QC everything again
+
+```
+module load FastQC/0.12.1-Java-11 
+module load parallel 
+mkdir fastqc_results 
+ls *.gz | parallel fastqc -o fastqc_results {} 
+module load MultiQC/1.22.3-foss-2023b 
+multiqc fastqc_results/ -o multiqc_report
+ 
+```
 
 # Assembly
 ## Step 5: Assemble the reads into contigs using Metaspades
