@@ -41,19 +41,18 @@ for i in kraken*txt; do cut -f2,3 $i > ${i%%.txt}.mapping_info.txt; done
 
 ## Step 4: Calculate the number of reads assigned to each taxonomy at the level that you choose i.e. family, genus, species.
 ### We are going to look at species in this example:
-First, we need to understand what ID is and what is not a species:
+#### Step 4a: We need to understand what ID is and what is not a species
 ```
 # extract the species IDs from the kraken report file
 cat  kreport_*.txt | awk '$4 == "S"' | cut -f5 | sort | uniq > Species_IDs.txt
 ```
 
-Now we will extract those species ids from the *.mapping_info.txt files:
+#### Step 4b: We will extract those species ids from the *.mapping_info.txt files
 ```
 for i in $(cat Species_IDs.txt); do     awk -v id="$i" '$2 == id' kraken_*.mapping_info.txt; done > Species_contig_matches.txt
 ```
 
-Now get a list of contigs for each taxonomy ID within each sample:
-
+#### Step 4c: Get a list of contigs for each taxonomy ID within each sample
 ```
 # Start a python session:
 python
@@ -66,7 +65,7 @@ python
 # continued below ...
 ```
 
-Now add up the number of reads assigned for each contig, for each taxonomy:
+#### Step 4d: Add up the number of reads assigned for each contig, for each taxonomy
 ```
 # continuing from the python code above, we will group by species_ID, sample, and sum the mapped_reads and contig length:
 >>> species_sample_grouped = merged_data.groupby(['species_ID', 'sample'], as_index=False)[['mapped_reads', 'contig_length']].sum()
@@ -79,8 +78,7 @@ Now add up the number of reads assigned for each contig, for each taxonomy:
 4         287  D8C44            50           4629
 # continued below ...
 ```
-Now we need to calculate RPK for each taxonomy:
-
+#### Step 4e: Now we need to calculate RPK for each taxonomy
 RPK_taxon = total_reads_for_taxon / (total_length_for_taxon / 1000)
 
 ```
@@ -96,14 +94,14 @@ RPK_taxon = total_reads_for_taxon / (total_length_for_taxon / 1000)
 # continued below ...
 ```
 
-Now calculate the scaling factor within samples :
+#### Step 4f: Calculate the scaling factor within samples
 scaling_factor = (sum of all RPK values across all taxa) / 1,000,000
 ```
 # group by sample and sum the RPK_taxon value
 >>> scaling_factor = species_sample_grouped.groupby(['sample'], as_index=False)['RPK_taxon'].sum()
 >>> scaling_factor['scaling_factor'] = scaling_factor['RPK_taxon'] / 1000000
 ```
-Now you have the scaling factor to use in the calculation of TPM:
+#### Step 4g: Calculate TPM
 TPM_taxon = RPK_taxon / scaling_factor
 
 ```
@@ -128,7 +126,7 @@ Finally, save the file for records:
 >>> tpm.to_csv("taxon_tpm_within_samples.csv", index=False)
 ```
 
-Note: you can check this correct by seeing if your tpm == 1000000 by
+Note: you can check if this is correct by seeing if your tpm == 1,000,000 by
 ```
 >>> tpm.groupby('sample')['tpm'].sum()
 sample
