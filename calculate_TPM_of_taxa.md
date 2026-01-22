@@ -128,6 +128,26 @@ Finally, save the file for records:
 >>> tpm.to_csv("taxon_tpm_within_samples.csv", index=False)
 ```
 
+Note: you can check this correct by seeing if your tpm == 1000000 by
+```
+>>> tpm.groupby('sample')['tpm'].sum()
+sample
+D8C01    1000000.0
+D8C03    1000000.0
+D8C05    1000000.0
+D8C42    1000000.0
+D8C43    1000000.0
+D8C44    1000000.0
+D8C61    1000000.0
+D8C63    1000000.0
+D8C65    1000000.0
+D8C82    1000000.0
+D8C84    1000000.0
+D8C85    1000000.0
+Name: tpm, dtype: float64
+```
+
+
 
 
 
