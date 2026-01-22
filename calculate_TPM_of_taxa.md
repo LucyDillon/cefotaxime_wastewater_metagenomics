@@ -63,11 +63,60 @@ python
 >>> merged_data = pd.merge(species_info, contig_counts, on='contig_ID')
 >>> merged_data.head()
 >>> merged_data.tail()
-
+# continued below ...
 ```
 
 Now add up the number of reads assigned for each contig, for each taxonomy:
 ```
+# continuing from the python code above, we will group by species_ID, sample, and sum the mapped_reads and contig length:
+>>> species_sample_grouped = merged_data.groupby(['species_ID', 'sample'], as_index=False)[['mapped_reads', 'contig_length']].sum()
+>>> species_sample_grouped.head()
+   species_ID sample  mapped_reads  contig_length
+0          56  D8C82            14           1188
+1         274  D8C61            24           1030
+2         287  D8C01            42           1032
+3         287  D8C03            30           1986
+4         287  D8C44            50           4629
+# continued below ...
 ```
+Now we need to calculate RPK for each taxonomy:
+
+RPK_taxon = total_reads_for_taxon / (total_length_for_taxon / 1000)
+
+```
+# following the python code above
+>>> species_sample_grouped['RPK_taxon'] = species_sample_grouped['mapped_reads'] / (species_sample_grouped['contig_length']/1000)
+>>> species_sample_grouped.head()
+   species_ID sample  mapped_reads  contig_length  RPK_taxon
+0          56  D8C82            14           1188  11.784512
+1         274  D8C61            24           1030  23.300971
+2         287  D8C01            42           1032  40.697674
+3         287  D8C03            30           1986  15.105740
+4         287  D8C44            50           4629  10.801469
+# continued below ...
+```
+
+Now calculate the scaling factor within samples :
+scaling_factor = (sum of all RPK values across all taxa) / 1,000,000
+```
+# group by sample and sum the RPK_taxon value
+>>> scaling_factor = species_sample_grouped.groupby(['sample'], as_index=False)['RPK_taxon'].sum()
+>>> scaling_factor['scaling_factor'] = scaling_factor['RPK_taxon'] / 1000000
+```
+Now you have the scaling factor to use in the calculation of TPM:
+TPM_taxon = RPK_taxon / scaling_factor
+
+```
+# you need to rename 'RPK_taxon' in your scaling_factor df
+>>> scaling_factor.rename(columns={'RPK_taxon':'RPK_taxon_total'}, inplace=True)
+>>> scaling_factor.head()
+# merge the scaling_factor df with the species_sample_grouped df
+>>> tpm = pd.merge(scaling_factor
+```
+
+
+
+
+
 
 
