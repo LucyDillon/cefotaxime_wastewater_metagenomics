@@ -52,8 +52,17 @@ Now we will extract those species ids from the *.mapping_info.txt files:
 for i in $(cat Species_IDs.txt); do     awk -v id="$i" '$2 == id' kraken_*.mapping_info.txt; done > Species_contig_matches.txt
 ```
 
-Now get a list of contigs for each taxonomy ID:
+Now get a list of contigs for each taxonomy ID within each sample:
+
 ```
+# Start a python session:
+python
+>>> import pandas as pd
+>>> species_info = pd.read_csv("Species_contig_matches.txt", sep = '\t', names = ['contig_ID', 'species_ID']) 
+>>> contig_counts = pd.read_csv("all_contig_counts.txt", sep = '\t', names = ['sample', 'contig_ID', 'contig_length', 'mapped_reads', 'unmapped_reads'])
+>>> merged_data = pd.merge(species_info, contig_counts, on='contig_ID')
+>>> merged_data.head()
+>>> merged_data.tail()
 
 ```
 
