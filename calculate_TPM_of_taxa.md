@@ -111,9 +111,22 @@ TPM_taxon = RPK_taxon / scaling_factor
 >>> scaling_factor.rename(columns={'RPK_taxon':'RPK_taxon_total'}, inplace=True)
 >>> scaling_factor.head()
 # merge the scaling_factor df with the species_sample_grouped df
->>> tpm = pd.merge(scaling_factor
+>>> tpm = pd.merge(species_sample_grouped, scaling_factor, on='sample')
+# calculate the tpm for each taxon within each sample
+>>> tpm['tpm'] = tpm['RPK_taxon'] / tpm['scaling_factor']
+>>> tpm.head()
+   species_ID sample  mapped_reads  contig_length  RPK_taxon  RPK_taxon_total  scaling_factor          tpm
+0          56  D8C82            14           1188  11.784512      4384.416536        0.004384  2687.817567
+1         274  D8C61            24           1030  23.300971      6852.457715        0.006852  3400.381563
+2         287  D8C01            42           1032  40.697674     17494.414399        0.017494  2326.323905
+3         287  D8C03            30           1986  15.105740      7177.425611        0.007177  2104.618146
+4         287  D8C44            50           4629  10.801469      1881.931407        0.001882  5739.565726
 ```
 
+Finally, save the file for records:
+```
+>>> tpm.to_csv("taxon_tpm_within_samples.csv", index=False)
+```
 
 
 
