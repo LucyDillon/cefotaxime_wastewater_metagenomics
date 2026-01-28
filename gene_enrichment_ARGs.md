@@ -3,7 +3,7 @@
 You will need now to calculate the read counts per gene NOT contig (that you did to calculate the TPM for taxonomy).
 
 Step 1: Build indexes for predicted genes
-```
+```bash
 module load apps/bowtie2/2.5.2/gcc-14.1.0
 module load apps/samtools/1.17/gcc-14.1.0
 
@@ -27,8 +27,7 @@ for i in $(cat ../../assembly/samples.txt); do featureCounts -a ${i}.gff -o ${i}
 
 Step 1: Parse featureCounts Output
 We will use python for the following steps.
-```
-python
+```python
 
 >>> import pandas as pd
 
