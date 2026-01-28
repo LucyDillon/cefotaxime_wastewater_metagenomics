@@ -26,8 +26,11 @@ for i in $(cat ../../assembly/samples.txt); do featureCounts -a ${i}.gff -o ${i}
 ```
 
 Step 1: Parse featureCounts Output
+We will use python for the following steps.
 ```
-import pandas as pd
+python
+
+>>> import pandas as pd
 
 # featureCounts output has this structure:
 # Geneid  Chr  Start  End  Strand  Length  sample1.bam
@@ -35,49 +38,49 @@ import pandas as pd
 # gene2   contig1  600  1200  +  600  75
 
 #this example will be for sample D8C01
-gene_counts = pd.read_csv("D8C01_counts.txt", sep='\t', comment='#', 
+>>> gene_counts = pd.read_csv("D8C01_counts.txt", sep='\t', comment='#', 
                           usecols=['Geneid', 'Length', 'D8C01.bam'])
-gene_counts.columns = ['gene_id', 'gene_length', 'mapped_reads']
-gene_counts['sample'] = 'D8C01'
+>>> gene_counts.columns = ['gene_id', 'gene_length', 'mapped_reads']
+>>> gene_counts['sample'] = 'D8C01'
 ```
 
 Step 2: Link to AMR Annotations
 
 ```
-amr_annotations = pd.read_csv("amr_annotations.txt", sep='\t',
+>>> amr_annotations = pd.read_csv("amr_annotations.txt", sep='\t',
                               names=['sample', 'gene_id', 'ARG', 'DrugClass', 'Subclass'])
 
 
-merged_data = pd.merge(amr_annotations, gene_counts, on=['gene_id', 'sample'])
+>>> merged_data = pd.merge(amr_annotations, gene_counts, on=['gene_id', 'sample'])
 ```
 
 
 Step 3: Aggregate by AMR Gene 
 ```
 # group by amr_gene
-amr_sample_grouped = merged_data.groupby(['ARG', 'sample'], as_index=False)[['mapped_reads', 'gene_length']].sum()
+>>> amr_sample_grouped = merged_data.groupby(['ARG', 'sample'], as_index=False)[['mapped_reads', 'gene_length']].sum()
 
 ```
 
 Step 4: Calculate RPK 
 ```
-amr_sample_grouped['RPK_gene'] = amr_sample_grouped['mapped_reads'] / (amr_sample_grouped['gene_length']/1000)
+>>> amr_sample_grouped['RPK_gene'] = amr_sample_grouped['mapped_reads'] / (amr_sample_grouped['gene_length']/1000)
 ```
 Step 5: Calculate Scaling Factor 
 ```
-scaling_factor = amr_sample_grouped.groupby(['sample'], as_index=False)['RPK_gene'].sum()
-scaling_factor['scaling_factor'] = scaling_factor['RPK_gene'] / 1000000
-scaling_factor.rename(columns={'RPK_gene':'RPK_gene_total'}, inplace=True)
+>>> scaling_factor = amr_sample_grouped.groupby(['sample'], as_index=False)['RPK_gene'].sum()
+>>> scaling_factor['scaling_factor'] = scaling_factor['RPK_gene'] / 1000000
+>>> scaling_factor.rename(columns={'RPK_gene':'RPK_gene_total'}, inplace=True)
 ```
 Step 6: Calculate TPM 
 ```
-tpm = pd.merge(amr_sample_grouped, scaling_factor, on='sample')
-tpm['tpm'] = tpm['RPK_gene'] / tpm['scaling_factor']
+>>> tpm = pd.merge(amr_sample_grouped, scaling_factor, on='sample')
+>>> tpm['tpm'] = tpm['RPK_gene'] / tpm['scaling_factor']
 
 # Save
-tpm.to_csv("amr_gene_tpm_within_samples.csv", index=False)
+>>> tpm.to_csv("amr_gene_tpm_within_samples.csv", index=False)
 
 # Verify
-tpm.groupby('sample')['tpm'].sum()  # Should be 1,000,000 for each sample
+>>> tpm.groupby('sample')['tpm'].sum()  # Should be 1,000,000 for each sample
 ```
 
