@@ -15,10 +15,11 @@ for i in $(cat ../../assembly/samples.txt); do bowtie2 -x ${i}_db -1 ../../prepr
 ```
 
 Step 3: calculate feature counts per gene
+Note: use the BAM file from the original assemblies not from prodigal 
 ```
 source activate /mnt/scratch2/igfs-anaconda/conda-envs/subread
-featureCounts -v
-#featureCounts v2.0.1
+# featureCounts -v
+# featureCounts v2.0.1
 
 for i in $(cat ../../assembly/samples.txt); do featureCounts -a ${i}.gff -o ${i}_counts.txt ../../assembly/alignment_data/${i}.bam; done
 
