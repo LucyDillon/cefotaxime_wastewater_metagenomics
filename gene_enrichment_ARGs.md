@@ -45,18 +45,17 @@ Step 2: Link to AMR Annotations
 
 ```
 amr_annotations = pd.read_csv("amr_annotations.txt", sep='\t',
-                              names=['gene_id', 'amr_gene', 'identity', ...])
+                              names=['sample', 'gene_id', 'ARG', 'DrugClass', 'Subclass'])
 
 
-merged_data = pd.merge(amr_annotations, gene_counts, on='gene_id')
-
+merged_data = pd.merge(amr_annotations, gene_counts, on=['gene_id', 'sample'])
 ```
 
 
 Step 3: Aggregate by AMR Gene 
 ```
-# Instead of grouping by species_ID, group by amr_gene
-amr_sample_grouped = merged_data.groupby(['amr_gene', 'sample'], as_index=False)[['mapped_reads', 'gene_length']].sum()
+# group by amr_gene
+amr_sample_grouped = merged_data.groupby(['ARG', 'sample'], as_index=False)[['mapped_reads', 'gene_length']].sum()
 
 ```
 
