@@ -1,7 +1,7 @@
 # Intructions on calculating the TPM of taxonomy coverage within metagenomic samples
 
 ## Step 1: Extract read counts per contig from BAM files
-```
+```bash
 #!/bin/bash
 #SBATCH --time=18:59:00
 #SBATCH --partition=k2-medpri,k2-bioinf
@@ -17,7 +17,7 @@ for i in $(cat samples.txt); do  samtools idxstats alignment_data/${i}.bam > con
 ```
 
 ## Step 2: Get contig lengths
-```
+```bash
 #!/bin/bash
 #SBATCH --time=18:59:00
 #SBATCH --partition=k2-medpri,k2-bioinf
@@ -34,7 +34,7 @@ for i in $(cat samples.txt); do  samtools view -H alignment_data/${i}.bam | grep
 
 ## Step 3: Link Kraken2 taxonomy to contigs
 This extracts the contig id and the taxonomy ID, i.e. 562 = E. coli.
-```
+```bash
 cd Laura_metagenomics/contig_annotate/kraken_contigs
 for i in kraken*txt; do cut -f2,3 $i > ${i%%.txt}.mapping_info.txt; done
 ```
@@ -42,18 +42,18 @@ for i in kraken*txt; do cut -f2,3 $i > ${i%%.txt}.mapping_info.txt; done
 ## Step 4: Calculate the number of reads assigned to each taxonomy at the level that you choose i.e. family, genus, species.
 ### We are going to look at species in this example:
 #### Step 4a: We need to understand what ID is and what is not a species
-```
+```bash
 # extract the species IDs from the kraken report file
 cat  kreport_*.txt | awk '$4 == "S"' | cut -f5 | sort | uniq > Species_IDs.txt
 ```
 
 #### Step 4b: We will extract those species ids from the *.mapping_info.txt files
-```
+```bash
 for i in $(cat Species_IDs.txt); do     awk -v id="$i" '$2 == id' kraken_*.mapping_info.txt; done > Species_contig_matches.txt
 ```
 
 #### Step 4c: Get a list of contigs for each taxonomy ID within each sample
-```
+```python
 # Start a python session:
 python
 >>> import pandas as pd
@@ -66,7 +66,7 @@ python
 ```
 
 #### Step 4d: Add up the number of reads assigned for each contig, for each taxonomy
-```
+```python
 # continuing from the python code above, we will group by species_ID, sample, and sum the mapped_reads and contig length:
 >>> species_sample_grouped = merged_data.groupby(['species_ID', 'sample'], as_index=False)[['mapped_reads', 'contig_length']].sum()
 >>> species_sample_grouped.head()
@@ -81,7 +81,7 @@ python
 #### Step 4e: Now we need to calculate RPK for each taxonomy
 RPK_taxon = total_reads_for_taxon / (total_length_for_taxon / 1000)
 
-```
+```python
 # following the python code above
 >>> species_sample_grouped['RPK_taxon'] = species_sample_grouped['mapped_reads'] / (species_sample_grouped['contig_length']/1000)
 >>> species_sample_grouped.head()
@@ -104,7 +104,7 @@ scaling_factor = (sum of all RPK values across all taxa) / 1,000,000
 #### Step 4g: Calculate TPM
 TPM_taxon = RPK_taxon / scaling_factor
 
-```
+```python
 # you need to rename 'RPK_taxon' in your scaling_factor df
 >>> scaling_factor.rename(columns={'RPK_taxon':'RPK_taxon_total'}, inplace=True)
 >>> scaling_factor.head()
@@ -122,12 +122,12 @@ TPM_taxon = RPK_taxon / scaling_factor
 ```
 
 Finally, save the file for records:
-```
+```python
 >>> tpm.to_csv("taxon_tpm_within_samples.csv", index=False)
 ```
 
 Note: you can check if this is correct by seeing if your tpm == 1,000,000 by
-```
+```python
 >>> tpm.groupby('sample')['tpm'].sum()
 sample
 D8C01    1000000.0
