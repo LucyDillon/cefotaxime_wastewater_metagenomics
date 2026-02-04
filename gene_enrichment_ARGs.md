@@ -1,4 +1,4 @@
-# Complete gene enrichment analysis of ARGs:
+# Calculate TPMs of ARGs:
 
 You will need now to calculate the read counts per gene NOT contig (that you did to calculate the TPM for taxonomy).
 
