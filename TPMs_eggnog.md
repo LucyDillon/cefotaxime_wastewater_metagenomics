@@ -1,4 +1,4 @@
-# Complete gene enrichment analysis of eggnog:
+# Complete TPM analysis of eggnog:
 
 You will need now to calculate the read counts per gene NOT contig (that you did to calculate the TPM for taxonomy).
 
