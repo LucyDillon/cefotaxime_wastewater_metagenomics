@@ -1,4 +1,4 @@
-# Complete gene enrichment analysis of plasmid:
+# Complete TPMs analysis of plasmid:
 
 You will need now to calculate the read counts per gene NOT contig (that you did to calculate the TPM for taxonomy).
 
