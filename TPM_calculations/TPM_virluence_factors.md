@@ -1,5 +1,3 @@
-# UNDER MAINTAINCE
-
 # Calculate TPMs of VFs:
 
 You will need now to calculate the read counts per gene NOT contig (that you did to calculate the TPM for taxonomy).
@@ -66,39 +64,37 @@ gene_counts.columns = ['sample', 'gene_id', 'gene_length', 'mapped_reads']
 ```
 
 Step 2: Link to VF Annotations
-LUCY: update file on Kelvin and 
 ```python
-amr_annotations = pd.read_csv("all_vfdb_results.tsv, sep='\t',
-                              names=['sample', 'gene_id', 'ARG', 'DrugClass', 'Subclass'])
+VF_annotations = pd.read_csv("../all_vfdb_results.csv")
 
-merged_data = pd.merge(amr_annotations, gene_counts, on=['gene_id', 'sample'])
+merged_data = pd.merge(VF_annotations, gene_counts, on=['gene_id', 'sample'])
 ```
 
 
 Step 3: Aggregate by AMR Gene 
 ```python
 # group by amr_gene
-amr_sample_grouped = merged_data.groupby(['ARG', 'sample'], as_index=False)[['mapped_reads', 'gene_length']].sum()
+VF_sample_grouped = merged_data.groupby(['VF', 'sample'], as_index=False)[['mapped_reads', 'gene_length']].sum()
 
 ```
 
 Step 4: Calculate RPK 
 ```python
-amr_sample_grouped['RPK_gene'] = amr_sample_grouped['mapped_reads'] / (amr_sample_grouped['gene_length']/1000)
+VF_sample_grouped['RPK_gene'] = VF_sample_grouped['mapped_reads'] / (VF_sample_grouped['gene_length']/1000)
 ```
 Step 5: Calculate Scaling Factor 
 ```python
-scaling_factor = amr_sample_grouped.groupby(['sample'], as_index=False)['RPK_gene'].sum()
+scaling_factor = VF_sample_grouped.groupby(['sample'], as_index=False)['RPK_gene'].sum()
 scaling_factor['scaling_factor'] = scaling_factor['RPK_gene'] / 1000000
 scaling_factor.rename(columns={'RPK_gene':'RPK_gene_total'}, inplace=True)
 ```
 Step 6: Calculate TPM 
 ```python
-tpm = pd.merge(amr_sample_grouped, scaling_factor, on='sample')
+tpm = pd.merge(VF_sample_grouped, scaling_factor, on='sample')
 tpm['tpm'] = tpm['RPK_gene'] / tpm['scaling_factor']
 
 # Save
-tpm.to_csv("amr_gene_tpm_within_samples.csv", index=False)
+tpm.to_csv("VF_gene_tpm_within_samples.csv", index=False)
 
 # Verify
 tpm.groupby('sample')['tpm'].sum()  # Should be 1,000,000 for each sample
