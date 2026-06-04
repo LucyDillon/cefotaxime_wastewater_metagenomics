@@ -78,10 +78,10 @@ merged_data = pd.merge(plasmid_annotations, gene_counts, on=['gene_id', 'sample'
 ```
 
 
-Step 3: Aggregate by eggnog KEGG_ko 
+Step 3: Aggregate by gene id 
 ```python
 # group by amr_gene
-plasmid_sample_grouped = merged_data.groupby(['annotation_accessions', 'sample'], as_index=False)[['mapped_reads', 'gene_length']].sum()
+plasmid_sample_grouped = merged_data.groupby(['gene_id', 'sample'], as_index=False)[['mapped_reads', 'gene_length']].sum()
 
 ```
 
@@ -101,7 +101,7 @@ tpm = pd.merge(plasmid_sample_grouped, scaling_factor, on='sample')
 tpm['tpm'] = tpm['RPK_gene'] / tpm['scaling_factor']
 
 # Save
-tpm.to_csv("genomad_plasmids_ko_tpm_within_samples.csv", index=False)
+tpm.to_csv("genomad_plasmids_tpm_within_samples.csv", index=False)
 
 # Verify
 tpm.groupby('sample')['tpm'].sum()  # Should be 1,000,000 for each sample
