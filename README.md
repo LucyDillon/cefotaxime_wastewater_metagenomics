@@ -35,6 +35,8 @@ multiqc fastqc_results/ -o multiqc_report
 You wil then need to QC Trimmed reads with FastQC and MultiQC
 
 ```
+sbatch run_fastp.sh
+
 module load FastQC/0.12.1-Java-11 
 module load parallel 
 ls *.fastq | parallel fastqc -o fastqc_results {} 
